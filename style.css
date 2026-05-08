@@ -1,0 +1,210 @@
+/*! 
+ * Automaton UI Design & Glassmorphism Elements
+ * Adapted from "Glassy AI Agents SaaS Interactive Dashboard" by Bence Madar on CodePen 
+ * Link: https://codepen.io/Bembit/pen/JoYGZOa
+ * License: MIT 
+ */
+
+/* ==========================================================================
+   GLOBAL TYPOGRAPHY & LAYOUT
+   ========================================================================== */
+body {
+    /* Primary font for the application */
+    font-family: "Inter", sans-serif;
+    
+    /* Prevents horizontal scrolling/bounce when flares move slightly off-screen */
+    overflow-x: hidden;
+    
+    /* Smooth transition when toggling between Dark and Light mode */
+    transition: background-color 0.5s ease;
+}
+
+/* Secondary font for paragraphs and smaller UI elements to create visual hierarchy */
+p, .text-slate-500, .text-slate-600, .text-sm {
+    font-family: "Manrope", sans-serif;
+}
+
+/* ==========================================================================
+   THEME BACKGROUNDS & ANIMATED MESH GRADIENTS
+   ========================================================================== */
+/* 
+   [JUNIOR DEV TIP]: To create a moving, fluid background, we make the background
+   400% larger than the screen itself (background-size: 400% 400%). 
+   Then, we use keyframes to slowly pan this massive background back and forth.
+*/
+body.dark-theme {
+    background: linear-gradient(245deg, #0f172a, #131b31, #2e1a47, #0e1f4a);
+    background-size: 400% 400%;
+    animation: gradient-flow 25s ease-in-out infinite;
+    color: #f8fafc;
+}
+
+body.light-theme {
+    background: linear-gradient(245deg, #f1f5f9, #f3f6ff, #eaf3ff, #e7ebf2);
+    background-size: 400% 400%;
+    animation: gradient-flow 25s ease-in-out infinite;
+    color: #1e293b;
+}
+
+@keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ==========================================================================
+   AMBIENT FLARES (Glowing Orbs)
+   ========================================================================== */
+.flare {
+    position: fixed; 
+    border-radius: 50%; 
+    /* The blur filter is what turns a solid circle into a smooth, glowing aura */
+    filter: blur(150px);
+    opacity: 0; 
+    animation: float 35s ease-in-out infinite alternate;
+    
+    /* Push the flares behind all other content so they act as a background (-1) */
+    z-index: -1; 
+    transition: opacity 1s ease-in-out;
+}
+
+.flare.cyan { 
+    width: 500px; height: 500px; background: #00ffff; 
+    top: 10%; left: 20%; opacity: 0.15; 
+}
+.flare.magenta { 
+    width: 400px; height: 400px; background: #ff00ff; 
+    bottom: 10%; right: 15%; 
+    animation-delay: 3s; /* Stagger the animation start so they don't move in sync */
+    opacity: 0.2; 
+}
+
+/* Light theme adjustments to keep flares visible but subtle */
+.light-theme .flare.cyan { opacity: 0.2; }
+.light-theme .flare.magenta { opacity: 0.25; background: #a855f7; }
+
+/* 
+   [PERFORMANCE / SECURITY TIP]: Notice how we animate 'transform' instead of 'top' or 'left'.
+   Animating top/left forces the CPU to constantly recalculate the page layout (Reflow).
+   Browsers offload 'transform' animations to the GPU (Graphics Card). 
+   This keeps the animation 60fps smooth and prevents the browser from freezing (Local DoS).
+*/
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(150px, -200px) rotate(180deg); }
+}
+
+/* A special flare that tracks the mouse cursor via JavaScript */
+.directional-flare {
+    position: fixed; top: 50%; left: 50%; width: 350px; height: 350px;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.025), transparent 80%);
+    opacity: 0; filter: blur(100px); border-radius: 50%; 
+    
+    /* CRITICAL: pointer-events: none ensures this invisible div doesn't block mouse clicks! */
+    pointer-events: none; 
+    z-index: 1;
+    transform: translate(-50%, -50%); 
+    transition: opacity 0.3s ease-out, transform 0.1s linear;
+}
+.light-theme .directional-flare { background: radial-gradient(closest-side, rgba(0, 0, 0, 0.05), transparent 80%); }
+
+/* ==========================================================================
+   GLASSMORPHISM CORE CLASSES
+   ========================================================================== */
+.glass-ui {
+    /* 
+       Backdrop-filter is the magic CSS property for Glassmorphism.
+       It blurs whatever elements are sitting *behind* this container.
+       The 'saturate' makes the underlying colors pop through the frosted glass.
+    */
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%); /* Safari support fallback */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Semi-transparent backgrounds to maintain the glass illusion */
+.dark .glass-ui { background-color: rgba(29, 39, 58, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); }
+.light .glass-ui { background-color: rgba(255, 255, 255, 0.5); border: 1px solid rgba(0, 0, 0, 0.08); }
+
+.dark header.glass-ui, .light header.glass-ui { border-left: none; border-right: none; }
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: background 0.3s ease, border 0.3s ease;
+}
+.dark .glass-card {
+    background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Adding bright top borders gives a "3D light reflection" effect to the glass */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Hover effects slightly increase opacity to show interaction */
+.glass-card:hover { background: rgba(255, 255, 255, 0.55); }
+.dark .glass-card:hover { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.12); }
+
+/* ==========================================================================
+   CUSTOM SCROLLBARS (Overrides ugly default browser scrollbars)
+   ========================================================================== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+.dark ::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); }
+.dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.7); border-radius: 10px; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+.light ::-webkit-scrollbar-track { background: rgba(226, 232, 240, 0.5); }
+.light ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.7); border-radius: 10px; }
+.light ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+
+/* ==========================================================================
+   AUTOMATON CUSTOM INJECTIONS (SIEM & SOAR Specifics)
+   ========================================================================== */
+
+/* 
+   [JUNIOR DEV TIP]: 'repeat(auto-fit, minmax(200px, 1fr))' is an amazing CSS Grid trick.
+   It automatically creates responsive columns WITHOUT needing @media queries!
+   It tells the browser: "Make as many equal columns as will fit, but never let them shrink below 200px".
+*/
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-item { display: flex; flex-direction: column; }
+.detail-label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.detail-value { font-size: 0.9rem; color: #f8fafc; font-family: 'JetBrains Mono', monospace; word-break: break-all; }
+
+/* Custom Colors for SIEM Severity Tags (Text Colors) */
+.sev-critical { color: #ef4444; font-weight: bold; }
+.sev-high { color: #f59e0b; font-weight: bold; }
+.sev-medium { color: #3b82f6; font-weight: bold; }
+.sev-low { color: #22c55e; font-weight: bold; }
+
+/* Custom Backgrounds for SIEM Severity Tags */
+.bg-sev-critical { background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); }
+.bg-sev-high { background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); }
+.bg-sev-medium { background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); }
+.bg-sev-low { background-color: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); }
+
+/* Accordion Row Animations for SIEM Logs (Using max-height for smooth transitions) */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.accordion-content.open {
+    max-height: 1500px; /* An arbitrary large number to allow content to expand */
+    opacity: 1;
+    padding-top: 0.5rem; /* Matches Tailwind pt-2 */
+    padding-bottom: 1.5rem; /* Matches Tailwind pb-6 */
+}
