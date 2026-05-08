@@ -1,4 +1,4 @@
-# 🛡️ Automaton | Enterprise SOAR & AI Copilot (Interactive Demo)
+# Automaton | Enterprise SOAR & AI Copilot (Interactive Demo)
 
 ![JavaScript](https://img.shields.io/badge/Vanilla_JS-ES6-F7DF1E.svg)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC.svg)
@@ -17,7 +17,7 @@ You can explore the interactive dashboard here:
 
 ---
 
-## 🧠 System Architecture & Workflow (Production Version)
+## System Architecture & Workflow (Production Version)
 
 While this demo uses static mock data, the actual production architecture of Automaton operates as follows:
 
@@ -43,7 +43,7 @@ more to come...
 
 ---
 
-## 💻 Technologies Used
+## Technologies Used
 
 * **Frontend:** Vanilla JavaScript (ES6), HTML5, CSS3, Tailwind CSS (Utility-first styling).
 * **Data Visualization:** Chart.js for real-time alert volume and severity tracking.
